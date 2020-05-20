@@ -1,3 +1,4 @@
+import aa from "./shader/Dot.fs"
 
 class Main {
 	constructor() {
@@ -5,6 +6,7 @@ class Main {
 	}
 
 	private draw() {  
+		console.log(aa);
 		// 顶点着色器程序
 		let VSHADER_SOURCE = 
 		'void main() {\n' +

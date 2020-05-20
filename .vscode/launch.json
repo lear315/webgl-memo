@@ -20,7 +20,7 @@
 			"sourceMapPathOverrides": {
 				"src/*": "${workspaceRoot}/src/*"
 			},	
-			"preLaunchTask": "tsc"	
+			"preLaunchTask": "webpack"	
 		}
 	]
 }

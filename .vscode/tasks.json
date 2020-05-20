@@ -9,6 +9,15 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"label": "webpack",
+			"type": "shell",
+			"command": "webpack",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
