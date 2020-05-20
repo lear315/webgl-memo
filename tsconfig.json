@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+		"target": "es6",
+    "sourceMap": true,
+    "noImplicitAny": false,
+		"rootDir": "src",
+		"declaration": false,
+		"noEmitOnError": true,
+		"alwaysStrict": true,
+		"outFile": "bin/bundle.js"
+	},
+	"include": [
+		"src/**/*.ts",
+		"libs/**/*.ts"
+	]
+}
