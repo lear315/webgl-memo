@@ -25,6 +25,7 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'bin'),
     },
+    devtool: "source-map",
     resolve: {
         extensions: ['.ts']
     }

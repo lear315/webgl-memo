@@ -1,4 +1,5 @@
-import aa from "./shader/Dot.fs"
+import DotFs from "./shader/Dot.fs"
+import DotVs from "./shader/Dot.vs"
 
 class Main {
 	constructor() {
@@ -6,28 +7,8 @@ class Main {
 	}
 
 	private draw() {  
-		console.log(aa);
-		// 顶点着色器程序
-		let VSHADER_SOURCE = 
-		'void main() {\n' +
-		'  gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n' + // Set the vertex coordinates of the point
-		'  gl_PointSize = 50.0;\n' +                    // Set the point size
-		'}\n';
-
-		// 片元着色器程序
-
-		// 在Fragment Shader中，float没有默认的精度，所以必须在Fragment Shader中为float指定一个默认精度或为每个float变量指定精度。
-		let FSHADER_SOURCE =
-		'#ifdef GL_ES\n'+
-		'precision mediump float;\n'+
-		'#endif\n'+
-		'void main() {\n' +
-		'float d = distance(gl_PointCoord, vec2(0.5,0.5));\n' +
-		'if (d<0.5){\n' +
-		'  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' + // Set the point color
-		'}else{discard;}\n' +
-		'}\n';
-		
+		let a: any ={}
+		console.log(a.x.x)
 		// 获取 <canvas> 元素
 		let canvas = document.querySelector("#glcanvas") as HTMLCanvasElement;
 
@@ -41,8 +22,8 @@ class Main {
 		// 创建程序对象
 		let program = gl.createProgram();
 
-		const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, VSHADER_SOURCE); //创建顶点着色器对象
-		const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, FSHADER_SOURCE);//创建片元着色器对象
+		const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, DotVs); //创建顶点着色器对象
+		const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, DotFs);//创建片元着色器对象
 
 		// 为程序对象分配着色器
 		gl.attachShader(program, vertexShader);
