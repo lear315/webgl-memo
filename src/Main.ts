@@ -1,5 +1,6 @@
 import DotFs from "./shader/Dot.fs"
 import DotVs from "./shader/Dot.vs"
+import { print11 } from "./Util";
 
 class Main {
 	constructor() {
@@ -7,8 +8,8 @@ class Main {
 	}
 
 	private draw() {  
-		let a: any ={}
-		console.log(a.x.x)
+		print11();
+
 		// 获取 <canvas> 元素
 		let canvas = document.querySelector("#glcanvas") as HTMLCanvasElement;
 
