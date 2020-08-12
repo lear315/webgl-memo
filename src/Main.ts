@@ -6,6 +6,20 @@ class Main {
 	private gl:  WebGLRenderingContext;
 	private canvas: HTMLCanvasElement
 
+
+
+	// 正方体顶点
+	private positions: number[] = [
+		-1, -1, -1,
+		1, -1, -1,
+		1,  1, -1,
+	   -1,  1, -1,
+	   -1, -1,  1,
+		1, -1,  1,
+		1,  1,  1,
+	   -1,  1,  1,
+	];
+
 	// 指定绘制顺序的索引数组
 	private indices: number[] = [
 		0, 1,
@@ -20,18 +34,6 @@ class Main {
 		1, 5,
 		2, 6,
 		3, 7,
-	];
-
-	// 正方体顶点
-	private positions: number[] = [
-		-1, -1, -1,
-		1, -1, -1,
-		1,  1, -1,
-	   -1,  1, -1,
-	   -1, -1,  1,
-		1, -1,  1,
-		1,  1,  1,
-	   -1,  1,  1,
 	];
 
 	private worldViewProjectionLoc: WebGLUniformLocation;
@@ -103,6 +105,7 @@ class Main {
 
 
 		let indicesBuffer = gl.createBuffer();
+		// gl.ELEMENT_ARRAY_BUFFER 表示数据是索引
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
 
@@ -118,10 +121,13 @@ class Main {
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+		// 投影矩阵
 		let filedOfView = 45 * Math.PI / 180;
 		let aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 		let projection = ThreeDMath.perspective(filedOfView, aspect, 0.01, 500);
 		let radius = 5;
+
+
 		let eye = [
 			Math.sin(clock) * radius,
 			1,
@@ -129,10 +135,15 @@ class Main {
 		];
 		let target = [0, 0, 0];
 		let up = [0, 1, 0];
+		// 视图矩阵
 		let view = ThreeDMath.lookAt(eye, target, up);
 
 		let worldViewProjection = ThreeDMath.multiplyMatrix(view, projection);
 		gl.uniformMatrix4fv(this.worldViewProjectionLoc, false, worldViewProjection);
+		// gl.drawElements 表示使用索引值来画
+		// 第一个参数还是表示要画的线,第二参数表示要画的索引的个数
+		// 第三个参数表示索引值的类型，我们用了 Uint16，所以类型是 gl.UNSIGNED_SHORT
+		// 最后一个参数是 offset 表示起始偏移
 		gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 		requestAnimationFrame(this.render.bind(this));
 	}
