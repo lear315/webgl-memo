@@ -6,32 +6,87 @@ class Main {
 	private gl:  WebGLRenderingContext;
 	private canvas: HTMLCanvasElement
 
-	// 指定绘制顺序的索引数组
-	private indices: number[] = [
-		0, 1,
-		1, 2,
-		2, 3,
-		3, 0,
-		4, 5,
-		5, 6,
-		6, 7,
-		7, 4,
-		0, 4,
-		1, 5,
-		2, 6,
-		3, 7,
-	];
+
 
 	// 正方体顶点
 	private positions: number[] = [
-		-1, -1, -1,
-		1, -1, -1,
-		1,  1, -1,
-	   -1,  1, -1,
-	   -1, -1,  1,
-		1, -1,  1,
-		1,  1,  1,
-	   -1,  1,  1,
+		// Front face
+		-1.0, -1.0,  1.0,
+		1.0, -1.0,  1.0,
+		1.0,  1.0,  1.0,
+		-1.0,  1.0,  1.0,
+
+		// Back face
+		-1.0, -1.0, -1.0,
+		-1.0,  1.0, -1.0,
+		1.0,  1.0, -1.0,
+		1.0, -1.0, -1.0,
+
+		// Top face
+		-1.0,  1.0, -1.0,
+		-1.0,  1.0,  1.0,
+		1.0,  1.0,  1.0,
+		1.0,  1.0, -1.0,
+
+		// Bottom face
+		-1.0, -1.0, -1.0,
+		1.0, -1.0, -1.0,
+		1.0, -1.0,  1.0,
+		-1.0, -1.0,  1.0,
+
+		// Right face
+		1.0, -1.0, -1.0,
+		1.0,  1.0, -1.0,
+		1.0,  1.0,  1.0,
+		1.0, -1.0,  1.0,
+
+		// Left face
+		-1.0, -1.0, -1.0,
+		-1.0, -1.0,  1.0,
+		-1.0,  1.0,  1.0,
+		-1.0,  1.0, -1.0,
+	];
+
+	private indices: number[] = [
+		0,  1,  2,      0,  2,  3,    // front
+		4,  5,  6,      4,  6,  7,    // back
+		8,  9,  10,     8,  10, 11,   // top
+		12, 13, 14,     12, 14, 15,   // bottom
+		16, 17, 18,     16, 18, 19,   // right
+		20, 21, 22,     20, 22, 23,   // left
+	];
+
+	// 正方体面颜色
+	private faceColors = [
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+
+		1.0,  0.0,  1.0,  1.0,    // Left face: purple
+		1.0,  0.0,  1.0,  1.0,    // Left face: purple
+		1.0,  0.0,  1.0,  1.0,    // Left face: purple
+		1.0,  0.0,  1.0,  1.0    // Left face: purple
 	];
 
 	private worldViewProjectionLoc: WebGLUniformLocation;
@@ -93,8 +148,9 @@ class Main {
 		// 获取在着色器中声明的变量
 		let positionLoc = gl.getAttribLocation(program, "a_position");
 		this.worldViewProjectionLoc = gl.getUniformLocation(program, "u_worldViewProjection");
+		let vertexColor = gl.getAttribLocation(program, "aVertexColor");
 
-		// 正方体顶点
+		// 正方体
 		let positionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
@@ -103,8 +159,16 @@ class Main {
 
 
 		let indicesBuffer = gl.createBuffer();
+		// gl.ELEMENT_ARRAY_BUFFER 表示数据是索引
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+		// 正方体颜色
+		let vertexColorBuff = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuff);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.faceColors), gl.STATIC_DRAW);
+		gl.vertexAttribPointer(vertexColor, 4, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(vertexColor);
 
 		// 每帧刷新
 		window.requestAnimationFrame(this.render.bind(this));
@@ -118,10 +182,13 @@ class Main {
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+		// 投影矩阵
 		let filedOfView = 45 * Math.PI / 180;
 		let aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 		let projection = ThreeDMath.perspective(filedOfView, aspect, 0.01, 500);
 		let radius = 5;
+
+
 		let eye = [
 			Math.sin(clock) * radius,
 			1,
@@ -129,11 +196,16 @@ class Main {
 		];
 		let target = [0, 0, 0];
 		let up = [0, 1, 0];
+		// 视图矩阵
 		let view = ThreeDMath.lookAt(eye, target, up);
 
 		let worldViewProjection = ThreeDMath.multiplyMatrix(view, projection);
 		gl.uniformMatrix4fv(this.worldViewProjectionLoc, false, worldViewProjection);
-		gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+		// gl.drawElements 表示使用索引值来画
+		// 第一个参数还是表示要画的线,第二参数表示要画的索引的个数
+		// 第三个参数表示索引值的类型，我们用了 Uint16，所以类型是 gl.UNSIGNED_SHORT
+		// 最后一个参数是 offset 表示起始偏移
+		gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 		requestAnimationFrame(this.render.bind(this));
 	}
 
