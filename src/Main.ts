@@ -263,7 +263,7 @@ class Main {
 
 		let modelMatrix  = ThreeDMath.mat4();
 
-	    // modelMatrix = ThreeDMath.rotate(modelMatrix, clock, [1, 0, 0]);
+	    modelMatrix = ThreeDMath.rotate(modelMatrix, modelMatrix, clock, [1, 0, 0]);
 
 		gl.uniformMatrix4fv(this.modelViewMatrixLoc, false, modelMatrix);
 		gl.uniformMatrix4fv(this.projectionMatrixLoc, false, worldViewProjection);

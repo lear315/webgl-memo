@@ -85,13 +85,13 @@ export default class ThreeDMath {
 	/**
 	 * Rotates a mat4 by the given angle around the given axis
 	 *\
+	 * @param {mat4} out the receiving matrix
 	 * @param {mat4} a the matrix to rotate
 	 * @param {Number} rad the angle to rotate the matrix by
 	 * @param {vec3} axis the axis to rotate around
 	 * @returns {mat4} out
 	 */
-	public static rotate(a: number[], rad: number, axis: number[]) {
-		var out = [];
+	public static rotate(out: number[], a: number[], rad: number, axis: number[]) {
 		var x = axis[0],
 			y = axis[1],
 			z = axis[2];
@@ -99,30 +99,24 @@ export default class ThreeDMath {
 		var s = void 0,
 			c = void 0,
 			t = void 0;
-
 		var a00 = void 0,
 			a01 = void 0,
 			a02 = void 0,
 			a03 = void 0;
-
 		var a10 = void 0,
 			a11 = void 0,
 			a12 = void 0,
 			a13 = void 0;
-
 		var a20 = void 0,
 			a21 = void 0,
 			a22 = void 0,
 			a23 = void 0;
-
 		var b00 = void 0,
 			b01 = void 0,
 			b02 = void 0;
-
 		var b10 = void 0,
 			b11 = void 0,
 			b12 = void 0;
-
 		var b20 = void 0,
 			b21 = void 0,
 			b22 = void 0;
