@@ -89,7 +89,48 @@ class Main {
 		1.0,  0.0,  1.0,  1.0    // Left face: purple
 	];
 
+	// 平面法向量
+	private normals = [
+		// Front face
+		0,0,1,
+		0,0,1,
+		0,0,1,
+		0,0,1,
+
+		// Back face
+		0,0,-1,
+		0,0,-1,
+		0,0,-1,
+		0,0,-1,
+
+		// Top face
+		0,1,0,
+		0,1,0,
+		0,1,0,
+		0,1,0,
+
+		// Bottom face
+		0,-1,0,
+		0,-1,0,
+		0,-1,0,
+		0,-1,0,
+
+		// Right face
+		1,0,0,
+		1,0,0,
+		1,0,0,
+		1,0,0,
+
+		// Left face
+		-1,0,0,
+		-1,0,0,
+		-1,0,0,
+		-1,0,0,
+	]
+
 	private worldViewProjectionLoc: WebGLUniformLocation;
+	private modelViewMatrixLoc: WebGLUniformLocation;
+	private projectionMatrixLoc: WebGLUniformLocation;
 
 	constructor() {
 		this.draw();
@@ -148,7 +189,17 @@ class Main {
 		// 获取在着色器中声明的变量
 		let positionLoc = gl.getAttribLocation(program, "a_position");
 		this.worldViewProjectionLoc = gl.getUniformLocation(program, "u_worldViewProjection");
+		this.modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
+		this.projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 		let vertexColor = gl.getAttribLocation(program, "aVertexColor");
+		let vertexNormal = gl.getAttribLocation(program, "a_normal");
+
+		let lightDirection = gl.getUniformLocation(program,'u_light');
+		let lightVec =  new Float32Array([0.1,0.3,0.8]);
+		gl.uniform3fv(
+			lightDirection,
+			lightVec
+		)
 
 		// 正方体
 		let positionBuffer = gl.createBuffer();
@@ -170,6 +221,14 @@ class Main {
 		gl.vertexAttribPointer(vertexColor, 4, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(vertexColor);
 
+		// 法向量
+		let normalBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer)
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.normals), gl.STATIC_DRAW);
+		gl.vertexAttribPointer(vertexNormal, 3, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(vertexNormal);
+
+
 		// 每帧刷新
 		window.requestAnimationFrame(this.render.bind(this));
 	}
@@ -188,11 +247,11 @@ class Main {
 		let projection = ThreeDMath.perspective(filedOfView, aspect, 0.01, 500);
 		let radius = 5;
 
-
+		// Math.cos(clock)
 		let eye = [
-			Math.sin(clock) * radius,
+			radius,
 			1,
-			Math.cos(clock) * radius,
+			radius,
 		];
 		let target = [0, 0, 0];
 		let up = [0, 1, 0];
@@ -201,6 +260,14 @@ class Main {
 
 		let worldViewProjection = ThreeDMath.multiplyMatrix(view, projection);
 		gl.uniformMatrix4fv(this.worldViewProjectionLoc, false, worldViewProjection);
+
+		let modelMatrix  = ThreeDMath.mat4();
+
+	    // modelMatrix = ThreeDMath.rotate(modelMatrix, clock, [1, 0, 0]);
+
+		gl.uniformMatrix4fv(this.modelViewMatrixLoc, false, modelMatrix);
+		gl.uniformMatrix4fv(this.projectionMatrixLoc, false, worldViewProjection);
+
 		// gl.drawElements 表示使用索引值来画
 		// 第一个参数还是表示要画的线,第二参数表示要画的索引的个数
 		// 第三个参数表示索引值的类型，我们用了 Uint16，所以类型是 gl.UNSIGNED_SHORT
