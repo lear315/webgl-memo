@@ -196,19 +196,26 @@ class Main {
 
 		// 灯光方向
 		let lightDirection = gl.getUniformLocation(program,'u_light');
-		let lightVec =  new Float32Array([0, 1, 0]);
+		let lightVec =  new Float32Array([0, -1, 0]);
 		gl.uniform3fv(
 			lightDirection,
 			lightVec
 		)
 
-		
 		// 灯光颜色
 		let lightColor = gl.getUniformLocation(program,'u_lightColor');
-		let lightColorVec =  new Float32Array([0.8, 0.8, 1]);
+		let lightColorVec =  new Float32Array([1, 1, 1]);
 		gl.uniform3fv(
 			lightColor,
 			lightColorVec
+		)
+
+		// 观察者的世界空间坐标
+		let eyePos = gl.getUniformLocation(program,'u_eyePos');
+		let eyePosVec =  new Float32Array([0.5, 0, 0]);
+		gl.uniform3fv(
+			eyePos,
+			eyePosVec
 		)
 
 		// 正方体
@@ -255,11 +262,10 @@ class Main {
 		let filedOfView = 45 * Math.PI / 180;
 		let aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 		let projection = ThreeDMath.perspective(filedOfView, aspect, 0.01, 500);
-		let radius = 5;
 
 		// Math.cos(clock)
 		let eye = [
-			radius,
+			5,
 			0,
 			0,
 		];
@@ -273,7 +279,7 @@ class Main {
 
 		let modelMatrix  = ThreeDMath.mat4();
 
-		modelMatrix = ThreeDMath.rotate(modelMatrix, clock, [1, 0, 1]);
+		modelMatrix = ThreeDMath.rotate(modelMatrix, clock/2, [0, 0.1, 1]);
 		modelMatrix = ThreeDMath.multiplyMatrix(modelMatrix, view);
 
 		gl.uniformMatrix4fv(this.modelViewMatrixLoc, false, modelMatrix);
