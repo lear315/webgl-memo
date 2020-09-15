@@ -196,7 +196,7 @@ class Main {
 
 		// 灯光方向
 		let lightDirection = gl.getUniformLocation(program,'u_light');
-		let lightVec =  new Float32Array([1, 1, 1]);
+		let lightVec =  new Float32Array([0, 1, 0]);
 		gl.uniform3fv(
 			lightDirection,
 			lightVec

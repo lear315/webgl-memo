@@ -13,7 +13,7 @@ void main() {
    
     gl_FragColor = vColor;
     // 环境光照
-    vec3 ambientLight = gl_FragColor.rgb * u_lightColor;
+    vec3 ambientLight = gl_FragColor.rgb * u_lightColor * 0.1;
     // 漫反射光照
     float light = max(dot(normal, u_light), 0.0);
     vec3 diffuseLight = gl_FragColor.rgb * light;
