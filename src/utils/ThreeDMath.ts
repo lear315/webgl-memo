@@ -91,7 +91,9 @@ export default class ThreeDMath {
 	 * @param {vec3} axis the axis to rotate around
 	 * @returns {mat4} out
 	 */
-	public static rotate(out: number[], a: number[], rad: number, axis: number[]) {
+	public static rotate(a: number[], rad: number, axis: number[]) {
+		var out: number[] = [];
+		out = a.concat([]);
 		var x = axis[0],
 			y = axis[1],
 			z = axis[2];

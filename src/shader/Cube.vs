@@ -13,7 +13,7 @@ varying lowp vec4 vColor;
 varying lowp vec3 v_normal;
 
 void main() {
-    gl_Position = uModelViewMatrix * uProjectionMatrix * a_position;
+    gl_Position =uProjectionMatrix * uModelViewMatrix *  a_position;
     vColor = aVertexColor;
     v_normal = mat3(uModelViewMatrix) * a_normal;
 }

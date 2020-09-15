@@ -58,35 +58,35 @@ class Main {
 
 	// 正方体面颜色
 	private faceColors = [
-		1.0,  1.0,  1.0,  1.0,    // Front face: white
-		1.0,  1.0,  1.0,  1.0,    // Front face: white
-		1.0,  1.0,  1.0,  1.0,    // Front face: white
-		1.0,  1.0,  1.0,  1.0,    // Front face: white
-
-		1.0,  0.0,  0.0,  1.0,    // Back face: red
-		1.0,  0.0,  0.0,  1.0,    // Back face: red
-		1.0,  0.0,  0.0,  1.0,    // Back face: red
-		1.0,  0.0,  0.0,  1.0,    // Back face: red
-
-		0.0,  1.0,  0.0,  1.0,    // Top face: green
-		0.0,  1.0,  0.0,  1.0,    // Top face: green
-		0.0,  1.0,  0.0,  1.0,    // Top face: green
-		0.0,  1.0,  0.0,  1.0,    // Top face: green
-
-		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
-		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
-		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
-		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
-
-		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
-		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
-		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
-		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
-
 		1.0,  0.0,  1.0,  1.0,    // Left face: purple
 		1.0,  0.0,  1.0,  1.0,    // Left face: purple
 		1.0,  0.0,  1.0,  1.0,    // Left face: purple
-		1.0,  0.0,  1.0,  1.0    // Left face: purple
+		1.0,  0.0,  1.0,  1.0,    // Left face: purple
+		
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+		0.0,  1.0,  0.0,  1.0,    // Top face: green
+
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+		1.0,  1.0,  1.0,  1.0,    // Front face: white
+
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+		1.0,  0.0,  0.0,  1.0,    // Back face: red
+
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+		0.0,  0.0,  1.0,  1.0,    // Bottom face: blue
+
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
+		1.0,  1.0,  0.0,  1.0,    // Right face: yellow
 	];
 
 	// 平面法向量
@@ -194,11 +194,21 @@ class Main {
 		let vertexColor = gl.getAttribLocation(program, "aVertexColor");
 		let vertexNormal = gl.getAttribLocation(program, "a_normal");
 
+		// 灯光方向
 		let lightDirection = gl.getUniformLocation(program,'u_light');
-		let lightVec =  new Float32Array([0.1,0.3,0.8]);
+		let lightVec =  new Float32Array([1, 1, 1]);
 		gl.uniform3fv(
 			lightDirection,
 			lightVec
+		)
+
+		
+		// 灯光颜色
+		let lightColor = gl.getUniformLocation(program,'u_lightColor');
+		let lightColorVec =  new Float32Array([0.8, 0.8, 1]);
+		gl.uniform3fv(
+			lightColor,
+			lightColorVec
 		)
 
 		// 正方体
@@ -250,8 +260,8 @@ class Main {
 		// Math.cos(clock)
 		let eye = [
 			radius,
-			1,
-			radius,
+			0,
+			0,
 		];
 		let target = [0, 0, 0];
 		let up = [0, 1, 0];
@@ -263,10 +273,11 @@ class Main {
 
 		let modelMatrix  = ThreeDMath.mat4();
 
-	    modelMatrix = ThreeDMath.rotate(modelMatrix, modelMatrix, clock, [0, 0, 1]);
+		modelMatrix = ThreeDMath.rotate(modelMatrix, clock, [1, 0, 1]);
+		modelMatrix = ThreeDMath.multiplyMatrix(modelMatrix, view);
 
 		gl.uniformMatrix4fv(this.modelViewMatrixLoc, false, modelMatrix);
-		gl.uniformMatrix4fv(this.projectionMatrixLoc, false, worldViewProjection);
+		gl.uniformMatrix4fv(this.projectionMatrixLoc, false, projection);
 
 		// gl.drawElements 表示使用索引值来画
 		// 第一个参数还是表示要画的线,第二参数表示要画的索引的个数
