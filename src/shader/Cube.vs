@@ -14,9 +14,13 @@ varying lowp vec3 v_normal;
 
 varying lowp vec3 v_fragpos;
 
+attribute vec2 a_TexCoord;
+varying vec2 v_TexCoord;
+
 void main() {
     gl_Position = uProjectionMatrix * uModelViewMatrix *  a_position;
     vColor = aVertexColor;
     v_normal = mat3(uModelViewMatrix) * a_normal;
     v_fragpos = vec3(uModelViewMatrix * a_position);
+    v_TexCoord = a_TexCoord;
 }

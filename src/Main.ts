@@ -128,12 +128,29 @@ class Main {
 		-1,0,0,
 	]
 
+
+	private texCoords  = [
+        1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+        1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
+	]
+
 	private worldViewProjectionLoc: WebGLUniformLocation;
 	private modelViewMatrixLoc: WebGLUniformLocation;
 	private projectionMatrixLoc: WebGLUniformLocation;
+	private _image: HTMLImageElement;
 
 	constructor() {
-		this.draw();
+
+		this._image = new Image();
+		this._image.onload =  () => {
+			this.draw();
+		};
+		this._image.src = "../res/img.png";
+
 	}
 
 	private draw() {  
@@ -193,10 +210,26 @@ class Main {
 		this.projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 		let vertexColor = gl.getAttribLocation(program, "aVertexColor");
 		let vertexNormal = gl.getAttribLocation(program, "a_normal");
+		let texcoordLoc = gl.getAttribLocation(program, "a_TexCoord")
+		let sampler = gl.getUniformLocation(program, 'u_Sampler');
+
+		// 纹理
+		let texture = gl.createTexture();
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.bindTexture(gl.TEXTURE_2D, texture);// 绑定纹理对象到激活的纹理单元
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);// 纹理放大方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);// 纹理缩小方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);// 纹理水平填充方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);// 纹理垂直填充方式
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, this._image);
+
+		gl.uniform1i(sampler, 0);
+
 
 		// 灯光方向
 		let lightDirection = gl.getUniformLocation(program,'u_light');
-		let lightVec =  new Float32Array([0, -1, 0]);
+		let lightVec =  new Float32Array([0, 1, 0]);
 		gl.uniform3fv(
 			lightDirection,
 			lightVec
@@ -212,7 +245,7 @@ class Main {
 
 		// 观察者的世界空间坐标
 		let eyePos = gl.getUniformLocation(program,'u_eyePos');
-		let eyePosVec =  new Float32Array([0.5, 0, 0]);
+		let eyePosVec =  new Float32Array([0.5, 0.5, 0]);
 		gl.uniform3fv(
 			eyePos,
 			eyePosVec
@@ -224,6 +257,13 @@ class Main {
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
 		gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(positionLoc);
+
+		// uv
+		let texcoordBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.texCoords), gl.STATIC_DRAW);
+		gl.vertexAttribPointer(texcoordLoc, 2, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(texcoordLoc);
 
 
 		let indicesBuffer = gl.createBuffer();
@@ -245,7 +285,6 @@ class Main {
 		gl.vertexAttribPointer(vertexNormal, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(vertexNormal);
 
-
 		// 每帧刷新
 		window.requestAnimationFrame(this.render.bind(this));
 	}
@@ -265,7 +304,7 @@ class Main {
 
 		// Math.cos(clock)
 		let eye = [
-			5,
+			6,
 			0,
 			0,
 		];
@@ -279,7 +318,7 @@ class Main {
 
 		let modelMatrix  = ThreeDMath.mat4();
 
-		modelMatrix = ThreeDMath.rotate(modelMatrix, clock/2, [0, 0.1, 1]);
+		modelMatrix = ThreeDMath.rotate(modelMatrix, clock/2, [0.2, 0.2, 1]);
 		modelMatrix = ThreeDMath.multiplyMatrix(modelMatrix, view);
 
 		gl.uniformMatrix4fv(this.modelViewMatrixLoc, false, modelMatrix);
