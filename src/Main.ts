@@ -142,16 +142,23 @@ class Main {
 	private modelViewMatrixLoc: WebGLUniformLocation;
 	private projectionMatrixLoc: WebGLUniformLocation;
 	private _image: HTMLImageElement;
+	private _image2: HTMLImageElement;
 
 	constructor() {
 
 		this._image = new Image();
 		this._image.onload =  () => {
-			this.draw();
+			this._image2 = new Image();
+			this._image2.onload =  () => {
+				this.draw();
+			};
+			this._image2.src = "../res/foot.png";
 		};
 		this._image.src = "../res/img.png";
 
 	}
+
+	private load
 
 	private draw() {  
 		// print11();
@@ -212,6 +219,7 @@ class Main {
 		let vertexNormal = gl.getAttribLocation(program, "a_normal");
 		let texcoordLoc = gl.getAttribLocation(program, "a_TexCoord")
 		let sampler = gl.getUniformLocation(program, 'u_Sampler');
+		let sampler2 = gl.getUniformLocation(program, 'u_Sampler2');
 
 		// 纹理
 		let texture = gl.createTexture();
@@ -222,8 +230,18 @@ class Main {
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);// 纹理水平填充方式
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);// 纹理垂直填充方式
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, this._image);
-
 		gl.uniform1i(sampler, 0);
+
+
+		let texture2 = gl.createTexture();
+		gl.activeTexture(gl.TEXTURE1);
+		gl.bindTexture(gl.TEXTURE_2D, texture2);// 绑定纹理对象到激活的纹理单元
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);// 纹理放大方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);// 纹理缩小方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);// 纹理水平填充方式
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);// 纹理垂直填充方式
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._image2);
+		gl.uniform1i(sampler2, 1);
 
 
 		// 灯光方向

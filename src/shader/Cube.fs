@@ -13,13 +13,22 @@ uniform lowp vec3 u_lightColor;
 varying lowp vec3 v_fragpos;
 varying vec2 v_TexCoord;
 uniform sampler2D u_Sampler;
+uniform sampler2D u_Sampler2;
+
+varying vec2 v_TexCoord1;
 
 void main() {
     vec3 normal = normalize(v_normal);
    
-    gl_FragColor = texture2D(u_Sampler, v_TexCoord);
+
+    vec4 acolor = texture2D(u_Sampler, v_TexCoord);
+    vec4 bcolor = texture2D(u_Sampler2, v_TexCoord1);
+
+
+    gl_FragColor = vec4(bcolor.a * bcolor.rgb + (1.0 - bcolor.a) * acolor.rgb ,1.0);
+
     // 环境光照
-    vec3 ambientLight = gl_FragColor.rgb * u_lightColor * 0.4;
+    vec3 ambientLight = gl_FragColor.rgb * u_lightColor * 0.5;
 
     // 漫反射光照
     float light = max(dot(normal, u_light), 0.0);
